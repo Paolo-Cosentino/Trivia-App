@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, ParseException, InterruptedException {
+    public static void main(String[] args) throws IOException, ParseException {
         String dbUrl = runPrompt();
         URL url = new URL(dbUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -45,14 +45,23 @@ public class Main {
             JSONObject jsonobj = (JSONObject) o;
             String question = (String) jsonobj.get("question");
             String correctAnswer = (String) jsonobj.get("correct_answer");
+            String questionType = (String) jsonobj.get("type");
+            Question temp;
 
-            ArrayList<String> allAnswers = new ArrayList<>();
-            for (Object i : (JSONArray) jsonobj.get("incorrect_answers"))
-                allAnswers.add((String) i);
+            if (questionType.equalsIgnoreCase("multiple")) {
+                ArrayList<String> allAnswers = new ArrayList<>();
+                for (Object i : (JSONArray) jsonobj.get("incorrect_answers"))
+                    allAnswers.add((String) i);
+                allAnswers.add(correctAnswer);
+                Collections.shuffle(allAnswers);
+                temp = new Question(question, questionType, correctAnswer, allAnswers);
+            } else {
+                ArrayList<String> tf = new ArrayList<>();
+                tf.add("True");
+                tf.add("False");
+                temp = new Question(question, questionType, correctAnswer, tf);
+            }
 
-            allAnswers.add(correctAnswer);
-            Collections.shuffle(allAnswers);
-            Question temp = new Question(question, correctAnswer, allAnswers);
             listOfQuestions.add(temp);
         }
 
@@ -61,21 +70,33 @@ public class Main {
         int count = 1;
         Scanner scan = new Scanner(System.in);
         for (Question q : listOfQuestions) {
+            System.out.println("Type: " + q.getQuestionType());
             System.out.println(count + ". " + q);
             System.out.print("Pick an option: ");
             char userInput = scan.next().charAt(0);
-
             int selection = -1;
-            while (userInput != 'a' && userInput != 'b' && userInput != 'c' && userInput != 'd') {
-                System.out.print("Invalid entry, try again: ");
-                userInput = scan.next().charAt(0);
-            }
 
-            switch (userInput) {
-                case 'a' -> selection = 0;
-                case 'b' -> selection = 1;
-                case 'c' -> selection = 2;
-                case 'd' -> selection = 3;
+            if (q.getQuestionType().equalsIgnoreCase("multiple")) {
+                while (userInput != 'a' && userInput != 'b' && userInput != 'c' && userInput != 'd') {
+                    System.out.print("Invalid entry, try again: ");
+                    userInput = scan.next().charAt(0);
+                }
+                switch (userInput) {
+                    case 'a' -> selection = 0;
+                    case 'b' -> selection = 1;
+                    case 'c' -> selection = 2;
+                    case 'd' -> selection = 3;
+                }
+            } else {
+                while (userInput != 'a' && userInput != 'b') {
+                    System.out.print("Invalid entry, try again: ");
+                    userInput = scan.next().charAt(0);
+                }
+
+                switch (userInput) {
+                    case 'a' -> selection = 0;
+                    case 'b' -> selection = 1;
+                }
             }
 
             if (q.getCorrectAnswer().equals(q.getAnswers().get(selection))) {
