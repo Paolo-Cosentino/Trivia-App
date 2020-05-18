@@ -108,9 +108,7 @@ public class Main {
             count++;
             System.out.println();
         }
-
         System.out.println("Score: " + score + "/" + listOfQuestions.size());
-
     }
 
     public static String runPrompt() {
