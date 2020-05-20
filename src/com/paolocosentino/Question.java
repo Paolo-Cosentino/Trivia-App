@@ -1,14 +1,14 @@
 package com.paolocosentino;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Question {
     private final String question;
     private final String correctAnswer;
     private final String questionType;
-    private final ArrayList<String> answers;
+    private final List<String> answers;
 
-    public Question(String question, String questionType, String correctAnswer, ArrayList<String> answers) {
+    public Question(String question, String questionType, String correctAnswer, List<String> answers) {
         this.question = question;
         this.questionType = questionType;
         this.correctAnswer = correctAnswer;
@@ -19,7 +19,7 @@ public class Question {
         return correctAnswer;
     }
 
-    public ArrayList<String> getAnswers() {
+    public List<String> getAnswers() {
         return answers;
     }
 
@@ -40,6 +40,5 @@ public class Question {
                     + "a) " + answers.get(0) + "\n"
                     + "b) " + answers.get(1) + "\n";
         }
-
     }
 }

@@ -16,8 +16,8 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) throws IOException, ParseException {
-        String dbUrl = runPrompt();
-        URL url = new URL(dbUrl);
+        /////////////Connection///////////////
+        URL url = new URL(runPrompt());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.connect();
@@ -37,30 +37,32 @@ public class Main {
         }
 
         JSONParser parse = new JSONParser();
-        JSONObject jobj = (JSONObject) parse.parse(inline.toString());
-        JSONArray jsonarr = (JSONArray) jobj.get("results");
+        JSONObject jObj = (JSONObject) parse.parse(inline.toString());
+        JSONArray jsonArr = (JSONArray) jObj.get("results");
         List<Question> listOfQuestions = new ArrayList<>();
+        List<String> trueAndFalseAnswers = new ArrayList<>() {{
+            add("True");
+            add("False");
+        }};
 
-        for (Object o : jsonarr) {
-            JSONObject jsonobj = (JSONObject) o;
-            String question = (String) jsonobj.get("question");
-            String correctAnswer = (String) jsonobj.get("correct_answer");
-            String questionType = (String) jsonobj.get("type");
+        for (Object o : jsonArr) {
+            JSONObject jsonObj = (JSONObject) o;
+            String question = (String) jsonObj.get("question");
+            String correctAnswer = (String) jsonObj.get("correct_answer");
+            String questionType = (String) jsonObj.get("type");
             Question temp;
 
             if (questionType.equalsIgnoreCase("multiple")) {
-                ArrayList<String> allAnswers = new ArrayList<>();
-                for (Object i : (JSONArray) jsonobj.get("incorrect_answers"))
+                List<String> allAnswers = new ArrayList<>();
+
+                for (Object i : (JSONArray) jsonObj.get("incorrect_answers"))
                     allAnswers.add((String) i);
+
                 allAnswers.add(correctAnswer);
                 Collections.shuffle(allAnswers);
                 temp = new Question(question, questionType, correctAnswer, allAnswers);
-            } else {
-                ArrayList<String> tf = new ArrayList<>();
-                tf.add("True");
-                tf.add("False");
-                temp = new Question(question, questionType, correctAnswer, tf);
-            }
+            } else
+                temp = new Question(question, questionType, correctAnswer, trueAndFalseAnswers);
 
             listOfQuestions.add(temp);
         }
@@ -69,8 +71,8 @@ public class Main {
         int score = 0;
         int count = 1;
         Scanner scan = new Scanner(System.in);
+
         for (Question q : listOfQuestions) {
-            System.out.println("Type: " + q.getQuestionType());
             System.out.println(count + ". " + q);
             System.out.print("Pick an option: ");
             char userInput = scan.next().charAt(0);
@@ -102,9 +104,9 @@ public class Main {
             if (q.getCorrectAnswer().equals(q.getAnswers().get(selection))) {
                 score++;
                 System.out.println("Correct!");
-            } else {
+            } else
                 System.out.println("Incorrect, '" + q.getCorrectAnswer() + "' is the correct answer.");
-            }
+
             count++;
             System.out.println();
         }
@@ -120,17 +122,17 @@ public class Main {
         int numOfQs = scan.nextInt();
 
         while (numOfQs < 1 || numOfQs > 50) {
-            System.out.print("Number of Questions: ");
+            System.out.print("Number of Questions (1-50): ");
             numOfQs = scan.nextInt();
         }
 
         str.append("amount=").append(numOfQs);
 
-        System.out.println("Category (0 = Any, 9-32): ");
+        System.out.print("Category of Questions (0=Any, 9-32): ");
         int categoryOfQs = scan.nextInt();
 
         while (categoryOfQs != 0 && categoryOfQs < 9 || categoryOfQs > 32) {
-            System.out.println("Category (0 = Any, 9-32): ");
+            System.out.print("Category of Questions (0=Any, 9-32): ");
             categoryOfQs = scan.nextInt();
         }
 
@@ -138,11 +140,11 @@ public class Main {
             str.append("&category=").append(categoryOfQs);
         }
 
-        System.out.println("Difficulty (0. Any, 1. Easy, 2. Medium, 3. Hard): ");
+        System.out.print("Difficulty of Questions (0=Any, 1=Easy, 2=Medium, 3=Hard): ");
         int difficultyOfQs = scan.nextInt();
 
         while (difficultyOfQs < 0 || difficultyOfQs > 3) {
-            System.out.println("Difficulty (0. Any, 1. Easy, 2. Medium, 3. Hard): ");
+            System.out.print("Difficulty of Questions (0=Any, 1=Easy, 2=Medium, 3=Hard): ");
             difficultyOfQs = scan.nextInt();
         }
 
@@ -156,11 +158,11 @@ public class Main {
             str.append("&difficulty=").append(difficulty);
         }
 
-        System.out.println("Type (0. Any, 1. Multiple Choice, 2. True/False): ");
+        System.out.print("Type of Questions (0=Any, 1=Multiple Choice, 2=True/False): ");
         int typeOfQuestions = scan.nextInt();
 
         while (typeOfQuestions < 0 || typeOfQuestions > 2) {
-            System.out.println("Type (0. Any, 1. Multiple Choice, 2. True/False): ");
+            System.out.print("Type of Questions(0=Any, 1=Multiple Choice, 2=True/False): ");
             typeOfQuestions = scan.nextInt();
         }
 
