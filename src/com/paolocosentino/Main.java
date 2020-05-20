@@ -30,7 +30,7 @@ public class Main {
                 break;
             } else if (!input.equalsIgnoreCase("Y")) {
                 while (!input.equalsIgnoreCase("Y") && !input.equalsIgnoreCase("N")) {
-                    System.out.print("Invalid Entry, try again (Y/N):");
+                    System.out.print("Invalid Entry, try again (Y/N): ");
                     input = scan.next();
                 }
                 if (input.equalsIgnoreCase("N")) {
@@ -56,7 +56,12 @@ public class Main {
 
         str.append("amount=").append(numOfQs);
 
-        System.out.print("Category of Questions (0=Any, 9-32): ");
+        System.out.print("Category of Questions" +
+                "\n(0=Any, 9=General Knowledge, 10=Books, 11=Film, 12=Music, 13=Musicals & Theatres," +
+                "\n14=Television, 15=Video Games, 16=Board Games, 17=Science & Nature, 18=Computers," +
+                "\n19=Mathematics, 20=Mythology, 21=Sports, 22=Geography, 23=History, 24=Politics," +
+                "\n25=Art, 26=Celebrities, 27=Animals, 28=Vehicles, 29=Comics, 30=Gadgets," +
+                "\n31=Japanese Anime & Manga, 32=Cartoon & Animations): ");
         int categoryOfQs = scan.nextInt();
 
         while (categoryOfQs != 0 && categoryOfQs < 9 || categoryOfQs > 32) {
