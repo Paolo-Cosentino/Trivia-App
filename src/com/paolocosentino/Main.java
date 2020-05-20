@@ -16,101 +16,29 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) throws IOException, ParseException {
-        /////////////Connection///////////////
-        URL url = new URL(runPrompt());
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.connect();
-
-        StringBuilder inline = new StringBuilder();
-
-        int responseCode = conn.getResponseCode();
-        if (responseCode != 200)
-            throw new RuntimeException("HttpResponseCode: " + responseCode);
-        else {
-            Scanner sc = new Scanner(url.openStream());
-
-            while (sc.hasNext())
-                inline.append(sc.nextLine());
-
-            sc.close();
-        }
-
-        JSONParser parse = new JSONParser();
-        JSONObject jObj = (JSONObject) parse.parse(inline.toString());
-        JSONArray jsonArr = (JSONArray) jObj.get("results");
-        List<Question> listOfQuestions = new ArrayList<>();
-        List<String> trueAndFalseAnswers = new ArrayList<>() {{
-            add("True");
-            add("False");
-        }};
-
-        for (Object o : jsonArr) {
-            JSONObject jsonObj = (JSONObject) o;
-            String question = (String) jsonObj.get("question");
-            String correctAnswer = (String) jsonObj.get("correct_answer");
-            String questionType = (String) jsonObj.get("type");
-            Question temp;
-
-            if (questionType.equalsIgnoreCase("multiple")) {
-                List<String> allAnswers = new ArrayList<>();
-
-                for (Object i : (JSONArray) jsonObj.get("incorrect_answers"))
-                    allAnswers.add((String) i);
-
-                allAnswers.add(correctAnswer);
-                Collections.shuffle(allAnswers);
-                temp = new Question(question, questionType, correctAnswer, allAnswers);
-            } else
-                temp = new Question(question, questionType, correctAnswer, trueAndFalseAnswers);
-
-            listOfQuestions.add(temp);
-        }
-
-        /////////////////Game///////////////////
-        int score = 0;
-        int count = 1;
         Scanner scan = new Scanner(System.in);
+        while (true) {
+            URL url = new URL(runPrompt());
+            List<Question> listOfQuestions = loadQuestions(url);
+            runGame(listOfQuestions);
 
-        for (Question q : listOfQuestions) {
-            System.out.println(count + ". " + q);
-            System.out.print("Pick an option: ");
-            char userInput = scan.next().charAt(0);
-            int selection = -1;
+            System.out.print("Play again (Y/N): ");
+            String input = scan.next();
 
-            if (q.getQuestionType().equalsIgnoreCase("multiple")) {
-                while (userInput != 'a' && userInput != 'b' && userInput != 'c' && userInput != 'd') {
-                    System.out.print("Invalid entry, try again: ");
-                    userInput = scan.next().charAt(0);
+            if (input.equalsIgnoreCase("N")) {
+                System.out.println("Exiting...");
+                break;
+            } else if (!input.equalsIgnoreCase("Y")) {
+                while (!input.equalsIgnoreCase("Y") && !input.equalsIgnoreCase("N")) {
+                    System.out.print("Invalid Entry, try again (Y/N):");
+                    input = scan.next();
                 }
-                switch (userInput) {
-                    case 'a' -> selection = 0;
-                    case 'b' -> selection = 1;
-                    case 'c' -> selection = 2;
-                    case 'd' -> selection = 3;
-                }
-            } else {
-                while (userInput != 'a' && userInput != 'b') {
-                    System.out.print("Invalid entry, try again: ");
-                    userInput = scan.next().charAt(0);
-                }
-
-                switch (userInput) {
-                    case 'a' -> selection = 0;
-                    case 'b' -> selection = 1;
+                if (input.equalsIgnoreCase("N")) {
+                    System.out.println("Exiting...");
+                    break;
                 }
             }
-
-            if (q.getCorrectAnswer().equals(q.getAnswers().get(selection))) {
-                score++;
-                System.out.println("Correct!");
-            } else
-                System.out.println("Incorrect, '" + q.getCorrectAnswer() + "' is the correct answer.");
-
-            count++;
-            System.out.println();
         }
-        System.out.println("Score: " + score + "/" + listOfQuestions.size());
     }
 
     public static String runPrompt() {
@@ -177,5 +105,103 @@ public class Main {
 
         System.out.println(str.toString());
         return str.toString();
+    }
+
+    public static List<Question> loadQuestions(URL url) throws IOException, ParseException {
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.connect();
+
+        StringBuilder inline = new StringBuilder();
+
+        int responseCode = conn.getResponseCode();
+        if (responseCode != 200)
+            throw new RuntimeException("HttpResponseCode: " + responseCode);
+        else {
+            Scanner sc = new Scanner(url.openStream());
+
+            while (sc.hasNext())
+                inline.append(sc.nextLine());
+
+            sc.close();
+        }
+
+        JSONParser parse = new JSONParser();
+        JSONObject jObj = (JSONObject) parse.parse(inline.toString());
+        JSONArray jsonArr = (JSONArray) jObj.get("results");
+        List<Question> listOfQuestions = new ArrayList<>();
+        List<String> trueAndFalseAnswers = new ArrayList<>() {{
+            add("True");
+            add("False");
+        }};
+
+        for (Object o : jsonArr) {
+            JSONObject jsonObj = (JSONObject) o;
+            String question = (String) jsonObj.get("question");
+            String correctAnswer = (String) jsonObj.get("correct_answer");
+            String questionType = (String) jsonObj.get("type");
+            Question temp;
+
+            if (questionType.equalsIgnoreCase("multiple")) {
+                List<String> allAnswers = new ArrayList<>();
+
+                for (Object i : (JSONArray) jsonObj.get("incorrect_answers"))
+                    allAnswers.add((String) i);
+
+                allAnswers.add(correctAnswer);
+                Collections.shuffle(allAnswers);
+                temp = new Question(question, questionType, correctAnswer, allAnswers);
+            } else
+                temp = new Question(question, questionType, correctAnswer, trueAndFalseAnswers);
+
+            listOfQuestions.add(temp);
+        }
+        return listOfQuestions;
+    }
+
+    public static void runGame(List<Question> listOfQs) {
+        int score = 0;
+        int count = 1;
+        Scanner scan = new Scanner(System.in);
+
+        for (Question q : listOfQs) {
+            System.out.println(count + ". " + q);
+            System.out.print("Pick an option: ");
+            char userInput = scan.next().charAt(0);
+            int selection = -1;
+
+            if (q.getQuestionType().equalsIgnoreCase("multiple")) {
+                while (userInput != 'a' && userInput != 'b' && userInput != 'c' && userInput != 'd') {
+                    System.out.print("Invalid entry, try again: ");
+                    userInput = scan.next().charAt(0);
+                }
+                switch (userInput) {
+                    case 'a' -> selection = 0;
+                    case 'b' -> selection = 1;
+                    case 'c' -> selection = 2;
+                    case 'd' -> selection = 3;
+                }
+            } else {
+                while (userInput != 'a' && userInput != 'b') {
+                    System.out.print("Invalid entry, try again: ");
+                    userInput = scan.next().charAt(0);
+                }
+
+                switch (userInput) {
+                    case 'a' -> selection = 0;
+                    case 'b' -> selection = 1;
+                }
+            }
+
+            if (q.getCorrectAnswer().equals(q.getAnswers().get(selection))) {
+                score++;
+                System.out.println("Correct!");
+            } else
+                System.out.println("Incorrect, '" + q.getCorrectAnswer() + "' is the correct answer.");
+
+            count++;
+            System.out.println();
+        }
+        System.out.println("Score: " + score + "/" + listOfQs.size());
     }
 }
