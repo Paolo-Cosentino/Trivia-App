@@ -15,30 +15,41 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, ParseException {
+    public static void main(String[] args) throws IOException, ParseException, InterruptedException {
         Scanner scan = new Scanner(System.in);
-        while (true) {
-            URL url = new URL(runPrompt());
-            List<Question> listOfQuestions = loadQuestions(url);
-            runGame(listOfQuestions);
 
-            System.out.print("Play again (Y/N): ");
-            String input = scan.next();
+        IntroGUI intro = new IntroGUI();
+        intro.setVisible(true);
+        
+        Thread.sleep(10000); //Not the right way of doing this.
 
-            if (input.equalsIgnoreCase("N")) {
-                System.out.println("Exiting...");
-                break;
-            } else if (!input.equalsIgnoreCase("Y")) {
-                while (!input.equalsIgnoreCase("Y") && !input.equalsIgnoreCase("N")) {
-                    System.out.print("Invalid Entry, try again (Y/N): ");
-                    input = scan.next();
-                }
-                if (input.equalsIgnoreCase("N")) {
-                    System.out.println("Exiting...");
-                    break;
-                }
-            }
-        }
+        System.out.println(intro.getNumberOfQuestions());
+        System.out.println(intro.getCategoryOfQuestions());
+        System.out.println(intro.getDifficultyOfQuestions());
+        System.out.println(intro.getTypeOfQuestions());
+
+//        while (true) {
+//            URL url = new URL(runPrompt());
+//            List<Question> listOfQuestions = loadQuestions(url);
+//            runGame(listOfQuestions);
+//
+//            System.out.print("Play again (Y/N): ");
+//            String input = scan.next();
+//
+//            if (input.equalsIgnoreCase("N")) {
+//                System.out.println("Exiting...");
+//                break;
+//            } else if (!input.equalsIgnoreCase("Y")) {
+//                while (!input.equalsIgnoreCase("Y") && !input.equalsIgnoreCase("N")) {
+//                    System.out.print("Invalid Entry, try again (Y/N): ");
+//                    input = scan.next();
+//                }
+//                if (input.equalsIgnoreCase("N")) {
+//                    System.out.println("Exiting...");
+//                    break;
+//                }
+//            }
+//        }
     }
 
     public static String runPrompt() {
