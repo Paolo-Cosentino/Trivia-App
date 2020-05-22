@@ -158,4 +158,8 @@ public class IntroGUI extends JFrame {
 
         return url.toString();
     }
+
+    public static void main(String[] args) {
+        new IntroGUI();
+    }
 }
