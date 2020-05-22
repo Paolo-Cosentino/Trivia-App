@@ -22,20 +22,21 @@ public class GameGUI extends JFrame {
         super("Trivia App");
         this.listOfQuestions = listOfQuestions;
 
-        this.setSize(1200, 600);
+        this.setSize(1200, 400);
         this.setLocationRelativeTo(null);
         this.setContentPane(mainPanel);
 
 
         /* Answer Panel */
+        topSplitPane.setResizeWeight(.5d);
         topSplitPane.setDividerSize(1);
         topSplitPane.setContinuousLayout(true);
         topSplitPane.setBorder(null);
-        topSplitPane.setResizeWeight(.5d);
+        bottomSplitPane.setResizeWeight(.5d);
         bottomSplitPane.setDividerSize(1);
         bottomSplitPane.setContinuousLayout(true);
         bottomSplitPane.setBorder(null);
-        bottomSplitPane.setResizeWeight(.5d);
+
 
         /* Question Panel */
         questionPanel.setBackground(null);
@@ -96,7 +97,7 @@ public class GameGUI extends JFrame {
         }
 
         //Set question
-        questionLabel.setText("Question Number: " + (curr+1));
+        questionLabel.setText("Question: " + (curr+1));
         questionPanel.setText(listOfQuestions.get(curr).getQuestion());
 
         //Set answer choices based on question type (Multiple or Boolean)
