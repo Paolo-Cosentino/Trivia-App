@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.paolocosentino.GameGUI">
-  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-    <margin top="10" left="10" bottom="10" right="10"/>
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="20" left="20" bottom="20" right="20"/>
     <constraints>
-      <xy x="20" y="20" width="874" height="186"/>
+      <xy x="20" y="20" width="704" height="184"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
       <splitpane id="8798f" binding="topSplitPane">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <continuousLayout value="false"/>
@@ -22,6 +22,8 @@
               <splitpane position="left"/>
             </constraints>
             <properties>
+              <enabled value="true"/>
+              <horizontalTextPosition value="0"/>
               <text value="Button"/>
             </properties>
           </component>
@@ -30,6 +32,7 @@
               <splitpane position="right"/>
             </constraints>
             <properties>
+              <horizontalTextPosition value="0"/>
               <text value="Button"/>
             </properties>
           </component>
@@ -37,7 +40,7 @@
       </splitpane>
       <splitpane id="2047e" binding="bottomSplitPane">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -47,6 +50,7 @@
               <splitpane position="left"/>
             </constraints>
             <properties>
+              <horizontalTextPosition value="0"/>
               <text value="Button"/>
             </properties>
           </component>
@@ -55,28 +59,33 @@
               <splitpane position="right"/>
             </constraints>
             <properties>
+              <horizontalTextPosition value="0"/>
               <text value="Button"/>
             </properties>
           </component>
         </children>
       </splitpane>
-      <component id="734f6" class="javax.swing.JTextArea" binding="questionPanel">
+      <component id="52c81" class="javax.swing.JTextArea" binding="questionPanel">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="2" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <columns value="40"/>
-          <editable value="false"/>
-          <enabled value="false"/>
-          <font size="28" style="1"/>
-          <foreground color="-4473925"/>
+          <columns value="30"/>
+          <font size="36" style="1"/>
           <lineWrap value="true"/>
-          <text value=""/>
           <wrapStyleWord value="true"/>
         </properties>
-        <clientProperties>
-          <html.disable class="java.lang.Boolean" value="false"/>
-        </clientProperties>
+      </component>
+      <component id="b7c6a" class="javax.swing.JLabel" binding="questionLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font size="18" style="0"/>
+          <horizontalAlignment value="0"/>
+          <horizontalTextPosition value="0"/>
+          <text value="Label"/>
+        </properties>
       </component>
     </children>
   </grid>

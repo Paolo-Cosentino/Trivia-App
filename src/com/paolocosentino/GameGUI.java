@@ -16,12 +16,13 @@ public class GameGUI extends JFrame {
     private JButton topRightButton;
     private JButton bottomLeftButton;
     private JButton bottomRightButton;
+    private JLabel questionLabel;
 
     public GameGUI(List<Question> listOfQuestions) {
         super("Trivia App");
         this.listOfQuestions = listOfQuestions;
 
-        this.setSize(800, 800);
+        this.setSize(1200, 600);
         this.setLocationRelativeTo(null);
         this.setContentPane(mainPanel);
 
@@ -30,9 +31,11 @@ public class GameGUI extends JFrame {
         topSplitPane.setDividerSize(1);
         topSplitPane.setContinuousLayout(true);
         topSplitPane.setBorder(null);
+        topSplitPane.setResizeWeight(.5d);
         bottomSplitPane.setDividerSize(1);
         bottomSplitPane.setContinuousLayout(true);
         bottomSplitPane.setBorder(null);
+        bottomSplitPane.setResizeWeight(.5d);
 
         /* Question Panel */
         questionPanel.setBackground(null);
@@ -46,6 +49,7 @@ public class GameGUI extends JFrame {
             if (isCorrect(0, listOfQuestions.get(currentQuestion)))
                 score++;
 
+            topLeftButton.setFocusPainted(false);
             currentQuestion += 1;
             setNextQuestion(currentQuestion);
         });
@@ -54,6 +58,7 @@ public class GameGUI extends JFrame {
             if (isCorrect(1, listOfQuestions.get(currentQuestion)))
                 score++;
 
+            topRightButton.setFocusPainted(false);
             currentQuestion += 1;
             setNextQuestion(currentQuestion);
         });
@@ -62,6 +67,7 @@ public class GameGUI extends JFrame {
             if (isCorrect(2, listOfQuestions.get(currentQuestion)))
                 score++;
 
+            bottomLeftButton.setFocusPainted(false);
             currentQuestion += 1;
             setNextQuestion(currentQuestion);
         });
@@ -70,12 +76,11 @@ public class GameGUI extends JFrame {
             if (isCorrect(3, listOfQuestions.get(currentQuestion)))
                 score++;
 
+            bottomRightButton.setFocusPainted(false);
             currentQuestion += 1;
             setNextQuestion(currentQuestion);
         });
 
-
-        this.pack();
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -85,12 +90,13 @@ public class GameGUI extends JFrame {
     }
 
     private void setNextQuestion(int curr) {
-        if (curr == listOfQuestions.size() - 1) {
+        if (curr == listOfQuestions.size()) {
             System.out.println("Score: " + score + "/" + listOfQuestions.size());
             System.exit(0);
         }
 
         //Set question
+        questionLabel.setText("Question Number: " + (curr+1));
         questionPanel.setText(listOfQuestions.get(curr).getQuestion());
 
         //Set answer choices based on question type (Multiple or Boolean)
@@ -109,7 +115,5 @@ public class GameGUI extends JFrame {
             bottomLeftButton.setText(listOfQuestions.get(curr).getAnswers().get(2));
             bottomRightButton.setText(listOfQuestions.get(curr).getAnswers().get(3));
         }
-
-        this.pack();
     }
 }
