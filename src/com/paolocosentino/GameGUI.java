@@ -92,12 +92,13 @@ public class GameGUI extends JFrame {
 
     private void setNextQuestion(int curr) {
         if (curr == listOfQuestions.size()) {
-            System.out.println("Score: " + score + "/" + listOfQuestions.size());
-            System.exit(0);
+            dispose();
+            new ResultsGUI(score, listOfQuestions.size());
+            return;
         }
 
         //Set question
-        questionLabel.setText("Question: " + (curr+1));
+        questionLabel.setText("Question: " + (curr + 1));
         questionPanel.setText(listOfQuestions.get(curr).getQuestion());
 
         //Set answer choices based on question type (Multiple or Boolean)
