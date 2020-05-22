@@ -27,6 +27,10 @@ public class Question {
         return questionType;
     }
 
+    public String getQuestion() {
+        return question;
+    }
+
     @Override
     public String toString() {
         if (this.getQuestionType().equalsIgnoreCase("multiple")) {

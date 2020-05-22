@@ -1,7 +1,15 @@
 package com.paolocosentino;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import javax.swing.*;
-import java.util.Objects;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.*;
 
 public class IntroGUI extends JFrame {
     private JComboBox categoryCB;
@@ -13,11 +21,6 @@ public class IntroGUI extends JFrame {
     private JButton cancelButton;
     private JButton okayButton;
     private JTextPane errorPane;
-
-    private String numberOfQuestions;
-    private String categoryOfQuestions;
-    private String difficultyOfQuestions;
-    private String typeOfQuestions;
 
     public IntroGUI() {
         super("Getting Started");
@@ -44,42 +47,115 @@ public class IntroGUI extends JFrame {
         cancelButton.addActionListener(ActionListener -> System.exit(0));
         okayButton.addActionListener(ActionListener -> {
             try {
-                numberOfQuestions = Objects.requireNonNull(numCB.getSelectedItem()).toString();
-                categoryOfQuestions = Objects.requireNonNull(categoryCB.getSelectedItem()).toString();
-                difficultyOfQuestions = Objects.requireNonNull(difficultyCB.getSelectedItem()).toString();
-                typeOfQuestions = Objects.requireNonNull(typeCB.getSelectedItem()).toString();
-
-//                System.out.println(numberOfQuestions + '\n' + categoryOfQuestions + '\n' + difficultyOfQuestions + '\n' + typeOfQuestions);
+                String numberOfQuestions = Objects.requireNonNull(numCB.getSelectedItem()).toString();
+                int categoryOfQuestions = categoryCB.getSelectedIndex();
+                int difficultyOfQuestions = difficultyCB.getSelectedIndex();
+                int typeOfQuestions = typeCB.getSelectedIndex();
                 dispose();
+
+                /* GameGUI Creation */
+                URL url = new URL(createURL(numberOfQuestions, categoryOfQuestions, difficultyOfQuestions, typeOfQuestions));
+                List<Question> listOfQuestions = loadQuestions(url);
+                new GameGUI(listOfQuestions);
+
             } catch (Exception e) {
+//                e.printStackTrace();
                 errorPane.setVisible(true);
-                //e.printStackTrace();
                 System.out.println("All FIELDS REQUIRED");
             }
         });
 
         this.pack();
+        this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public String getNumberOfQuestions() {
-        return numberOfQuestions;
+    public List<Question> loadQuestions(URL url) throws IOException, ParseException {
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.connect();
+
+        StringBuilder inline = new StringBuilder();
+
+        int responseCode = conn.getResponseCode();
+        if (responseCode != 200)
+            throw new RuntimeException("HttpResponseCode: " + responseCode);
+        else {
+            Scanner sc = new Scanner(url.openStream());
+
+            while (sc.hasNext())
+                inline.append(sc.nextLine());
+
+            sc.close();
+        }
+
+        JSONParser parse = new JSONParser();
+        JSONObject jObj = (JSONObject) parse.parse(inline.toString());
+        JSONArray jsonArr = (JSONArray) jObj.get("results");
+        List<Question> listOfQuestions = new ArrayList<>();
+        List<String> trueAndFalseAnswers = new ArrayList<>() {{
+            add("True");
+            add("False");
+        }};
+
+        for (Object o : jsonArr) {
+            JSONObject jsonObj = (JSONObject) o;
+            String question = (String) jsonObj.get("question");
+            String correctAnswer = (String) jsonObj.get("correct_answer");
+            String questionType = (String) jsonObj.get("type");
+            Question temp;
+
+            if (questionType.equalsIgnoreCase("multiple")) {
+                List<String> allAnswers = new ArrayList<>();
+
+                for (Object i : (JSONArray) jsonObj.get("incorrect_answers"))
+                    allAnswers.add((String) i);
+
+                allAnswers.add(correctAnswer);
+                Collections.shuffle(allAnswers);
+                temp = new Question(question, questionType, correctAnswer, allAnswers);
+            } else
+                temp = new Question(question, questionType, correctAnswer, trueAndFalseAnswers);
+
+            listOfQuestions.add(temp);
+        }
+        return listOfQuestions;
     }
 
-    public String getCategoryOfQuestions() {
-        return categoryOfQuestions;
-    }
+    public static String createURL(String numQs, int catQs, int difQs, int typeQs) {
+        StringBuilder url = new StringBuilder();
+        url.append("https://opentdb.com/api.php?");
 
-    public String getDifficultyOfQuestions() {
-        return difficultyOfQuestions;
-    }
+        /* Number of Questions */
+        url.append("amount=").append(numQs);
 
-    public String getTypeOfQuestions() {
-        return typeOfQuestions;
-    }
+        /* Category of Questions, if category = 0 (Any), query is left blank. */
+        if (catQs != 0) {
+            catQs += 8;
+            url.append("&category=").append(catQs);
+        }
 
-//    public static void main(String[] args) {
-//        JFrame frame = new IntroGUI();
-//        frame.setVisible(true);
-//    }
+        /* Difficult of Questions */
+        if (difQs != 0) {
+            String difficulty = switch (difQs) {
+                case 1 -> "easy";
+                case 2 -> "medium";
+                case 3 -> "hard";
+                default -> "";
+            };
+            url.append("&difficulty=").append(difficulty);
+        }
+
+        /* Type of Questions */
+        if (typeQs != 0) {
+            String type = switch (typeQs) {
+                case 1 -> "multiple";
+                case 2 -> "boolean";
+                default -> "";
+            };
+            url.append("&type=").append(type);
+        }
+
+        return url.toString();
+    }
 }
