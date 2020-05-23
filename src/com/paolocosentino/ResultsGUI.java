@@ -20,7 +20,7 @@ public class ResultsGUI extends JFrame {
 
         /* Result Pane */
         resultLabel.setBackground(null);
-        resultLabel.setText(score + " / " + size);
+        resultLabel.setText(score + "/" + size);
 
         /* Play Again Label Pane */
         playAgainLabel.setBackground(null);
