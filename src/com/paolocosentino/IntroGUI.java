@@ -56,8 +56,14 @@ public class IntroGUI extends JFrame {
                 /* GameGUI Creation */
                 URL url = new URL(createURL(numberOfQuestions, categoryOfQuestions, difficultyOfQuestions, typeOfQuestions));
                 List<Question> listOfQuestions = loadQuestions(url);
-                new GameGUI(listOfQuestions);
 
+                if (listOfQuestions != null) {
+                    System.out.println(url);
+                    new GameGUI(listOfQuestions);
+                } else {
+                    System.out.println("Sorry, TriviaDB API doesn't have any questions for the following: " + url);
+                    new IntroGUI();
+                }
             } catch (Exception e) {
 //                e.printStackTrace();
                 errorPane.setVisible(true);
@@ -97,6 +103,9 @@ public class IntroGUI extends JFrame {
             add("True");
             add("False");
         }};
+
+        if (jsonArr.size() == 0)
+            return null;
 
         for (Object o : jsonArr) {
             JSONObject jsonObj = (JSONObject) o;
