@@ -49,8 +49,11 @@ public class IntroGUI extends JFrame {
             try {
                 String numberOfQuestions = Objects.requireNonNull(numCB.getSelectedItem()).toString();
                 int categoryOfQuestions = categoryCB.getSelectedIndex();
+//                System.out.println(categoryOfQuestions);
                 int difficultyOfQuestions = difficultyCB.getSelectedIndex();
+//                System.out.println(difficultyOfQuestions);
                 int typeOfQuestions = typeCB.getSelectedIndex();
+//                System.out.println(typeOfQuestions);
                 dispose();
 
                 /* GameGUI Creation */
@@ -67,7 +70,7 @@ public class IntroGUI extends JFrame {
             } catch (Exception e) {
 //                e.printStackTrace();
                 errorPane.setVisible(true);
-                System.out.println("All FIELDS REQUIRED");
+                this.pack();
             }
         });
 
@@ -139,13 +142,13 @@ public class IntroGUI extends JFrame {
         url.append("amount=").append(numQs);
 
         /* Category of Questions, if category = 0 (Any), query is left blank. */
-        if (catQs != 0) {
+        if (catQs > 0) {
             catQs += 8;
             url.append("&category=").append(catQs);
         }
 
         /* Difficult of Questions */
-        if (difQs != 0) {
+        if (difQs > 0) {
             String difficulty = switch (difQs) {
                 case 1 -> "easy";
                 case 2 -> "medium";
@@ -156,7 +159,7 @@ public class IntroGUI extends JFrame {
         }
 
         /* Type of Questions */
-        if (typeQs != 0) {
+        if (typeQs > 0) {
             String type = switch (typeQs) {
                 case 1 -> "multiple";
                 case 2 -> "boolean";
